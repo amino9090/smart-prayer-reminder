@@ -1,12 +1,81 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { IslamicHeader } from "@/components/IslamicHeader";
+import { PrayerTimeCard } from "@/components/PrayerTimeCard";
+import { CountdownTimer } from "@/components/CountdownTimer";
+import { NavigationBar } from "@/components/NavigationBar";
+import { usePrayerTimes } from "@/hooks/usePrayerTimes";
+import { Loader2 } from "lucide-react";
+import mosqueBg from "@/assets/mosque-bg.jpg";
 
 const Index = () => {
+  const { prayerTimes, nextPrayer, loading } = usePrayerTimes();
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-gradient-islamic relative overflow-hidden pb-24">
+      {/* Background Image with Overlay */}
+      <div
+        className="absolute inset-0 opacity-20"
+        style={{
+          backgroundImage: `url(${mosqueBg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundAttachment: "fixed",
+        }}
+      />
+      
+      {/* Animated Stars */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-1 bg-primary rounded-full animate-pulse"
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${2 + Math.random() * 3}s`,
+            }}
+          />
+        ))}
       </div>
+
+      {/* Content */}
+      <div className="relative z-10 container mx-auto px-4 py-8 max-w-4xl">
+        <IslamicHeader />
+
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="animate-spin text-primary" size={48} />
+          </div>
+        ) : (
+          <>
+            {nextPrayer && (
+              <div className="mb-8">
+                <CountdownTimer
+                  nextPrayerTime={nextPrayer.time}
+                  nextPrayerName={nextPrayer.arabicName}
+                />
+              </div>
+            )}
+
+            <div className="space-y-4">
+              <h2 className="text-2xl font-bold text-center mb-6 font-amiri text-primary">
+                مواقيت الصلاة
+              </h2>
+              {prayerTimes.map((prayer) => (
+                <PrayerTimeCard
+                  key={prayer.name}
+                  name={prayer.name}
+                  arabicName={prayer.arabicName}
+                  time={prayer.time}
+                  isNext={nextPrayer?.name === prayer.name}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+
+      <NavigationBar />
     </div>
   );
 };

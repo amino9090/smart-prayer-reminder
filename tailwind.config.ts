@@ -13,6 +13,10 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        cairo: ['Cairo', 'sans-serif'],
+        amiri: ['Amiri', 'serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -56,6 +60,13 @@ export default {
           "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
+        },
+        islamic: {
+          gold: "hsl(var(--islamic-gold))",
+          "gold-light": "hsl(var(--islamic-gold-light))",
+          "blue-dark": "hsl(var(--islamic-blue-dark))",
+          blue: "hsl(var(--islamic-blue))",
+          "blue-light": "hsl(var(--islamic-blue-light))",
         },
       },
       borderRadius: {
