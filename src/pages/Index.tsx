@@ -75,7 +75,7 @@ const Index = () => {
         )}
       </div>
 
-      <NavigationBar />
+      <NavigationBar currentPage="prayer" />
     </div>
   );
 };
