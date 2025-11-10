@@ -3,11 +3,23 @@ import { PrayerTimeCard } from "@/components/PrayerTimeCard";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { NavigationBar } from "@/components/NavigationBar";
 import { usePrayerTimes } from "@/hooks/usePrayerTimes";
+import { useNotifications } from "@/hooks/useNotifications";
+import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import mosqueBg from "@/assets/mosque-bg.jpg";
 
 const Index = () => {
   const { prayerTimes, nextPrayer, loading } = usePrayerTimes();
+  const { scheduleNotification, settings } = useNotifications();
+
+  // Schedule notifications for all prayers when prayer times are loaded
+  useEffect(() => {
+    if (prayerTimes.length > 0 && settings.enabled) {
+      prayerTimes.forEach((prayer) => {
+        scheduleNotification(prayer.name, prayer.arabicName, prayer.time);
+      });
+    }
+  }, [prayerTimes, settings.enabled, scheduleNotification]);
 
   return (
     <div className="min-h-screen bg-gradient-islamic relative overflow-hidden pb-24">

@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -10,22 +11,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { NavigationBar } from "@/components/NavigationBar";
-import { Moon, Sun, Globe, Calculator, Bell, Volume2 } from "lucide-react";
+import { Moon, Sun, Globe, Calculator, Bell, Volume2, Music } from "lucide-react";
 import { toast } from "sonner";
 import islamicPattern from "@/assets/islamic-pattern.jpg";
+import { useNotifications } from "@/hooks/useNotifications";
+import { AdhanPlayer } from "@/components/AdhanPlayer";
 
 const Settings = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState("ar");
   const [calculationMethod, setCalculationMethod] = useState("4");
-  const [notifications, setNotifications] = useState({
-    fajr: true,
-    dhuhr: true,
-    asr: true,
-    maghrib: true,
-    isha: true,
-  });
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const { settings, updateSettings, permission, requestPermission } = useNotifications();
 
   const calculationMethods = [
     { value: "1", label: "جامعة أم القرى، مكة المكرمة", labelEn: "University of Islamic Sciences, Karachi" },
@@ -43,12 +39,27 @@ const Settings = () => {
     { key: "isha", arabic: "العشاء", english: "Isha" },
   ];
 
+  // Request notification permission on mount
+  useEffect(() => {
+    if (permission === "default" && settings.enabled) {
+      requestPermission();
+    }
+  }, []);
+
   const handleNotificationToggle = (prayer: string) => {
-    setNotifications((prev) => ({
-      ...prev,
-      [prayer]: !prev[prayer as keyof typeof notifications],
-    }));
-    toast.success(`تم ${notifications[prayer as keyof typeof notifications] ? "تعطيل" : "تفعيل"} تنبيه ${prayerNames.find(p => p.key === prayer)?.arabic}`);
+    const newValue = !settings.prayers[prayer as keyof typeof settings.prayers];
+    updateSettings({
+      prayers: {
+        ...settings.prayers,
+        [prayer]: newValue,
+      },
+    });
+    toast.success(`تم ${newValue ? "تفعيل" : "تعطيل"} تنبيه ${prayerNames.find(p => p.key === prayer)?.arabic}`);
+  };
+
+  const handleAdhanSoundChange = (value: "makkah" | "madinah" | "egyptian") => {
+    updateSettings({ adhanSound: value });
+    toast.success("تم تغيير صوت الأذان");
   };
 
   const handleDarkModeToggle = () => {
@@ -212,7 +223,7 @@ const Settings = () => {
                   </div>
                   <Switch
                     id={`notification-${prayer.key}`}
-                    checked={notifications[prayer.key as keyof typeof notifications]}
+                    checked={settings.prayers[prayer.key as keyof typeof settings.prayers]}
                     onCheckedChange={() => handleNotificationToggle(prayer.key)}
                   />
                 </div>
@@ -232,12 +243,63 @@ const Settings = () => {
                 </div>
                 <Switch
                   id="sound-enabled"
-                  checked={soundEnabled}
+                  checked={settings.enabled}
                   onCheckedChange={(checked) => {
-                    setSoundEnabled(checked);
+                    updateSettings({ enabled: checked });
                     toast.success(checked ? "تم تفعيل الصوت" : "تم كتم الصوت");
                   }}
                 />
+              </div>
+            </div>
+          </Card>
+
+          {/* Adhan Sound Selection */}
+          <Card className="p-6 bg-card">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-3 rounded-lg bg-primary/10">
+                <Music className="text-primary" size={24} />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold font-amiri text-foreground">صوت الأذان</h2>
+                <p className="text-sm text-muted-foreground font-cairo">اختر صوت المؤذن المفضل</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {permission !== "granted" && (
+                <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/20 mb-4">
+                  <p className="text-sm text-amber-500 font-cairo mb-3">
+                    يجب السماح بالإشعارات لتفعيل تنبيهات الأذان
+                  </p>
+                  <Button
+                    onClick={requestPermission}
+                    className="w-full"
+                    variant="outline"
+                  >
+                    <Bell className="w-4 h-4 ml-2" />
+                    <span className="font-cairo">السماح بالإشعارات</span>
+                  </Button>
+                </div>
+              )}
+
+              <Select value={settings.adhanSound} onValueChange={handleAdhanSoundChange}>
+                <SelectTrigger className="w-full font-cairo">
+                  <SelectValue placeholder="اختر صوت الأذان" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="makkah" className="font-cairo">أذان مكة المكرمة</SelectItem>
+                  <SelectItem value="madinah" className="font-cairo">أذان المدينة المنورة</SelectItem>
+                  <SelectItem value="egyptian" className="font-cairo">أذان مصري</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <div className="pt-4 space-y-3">
+                <p className="text-sm text-muted-foreground font-cairo mb-3">
+                  استمع إلى الأصوات المتاحة:
+                </p>
+                <AdhanPlayer adhanType="makkah" label="أذان مكة المكرمة" />
+                <AdhanPlayer adhanType="madinah" label="أذان المدينة المنورة" />
+                <AdhanPlayer adhanType="egyptian" label="أذان مصري" />
               </div>
             </div>
           </Card>
