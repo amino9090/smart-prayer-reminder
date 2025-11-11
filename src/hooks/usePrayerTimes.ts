@@ -25,16 +25,24 @@ export const usePrayerTimes = () => {
       if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
-            setLocation({
+            const userLocation = {
               lat: position.coords.latitude,
               lng: position.coords.longitude,
-            });
+            };
+            setLocation(userLocation);
+            console.log("تم الحصول على الموقع:", userLocation);
+            toast.success("تم تحديد موقعك بنجاح");
           },
           (error) => {
             console.error("Error getting location:", error);
-            toast.error("تعذر الحصول على موقعك. سيتم استخدام موقع افتراضي.");
+            toast.error("تعذر الحصول على موقعك. سيتم استخدام موقع افتراضي (مكة المكرمة)");
             // Default to Mecca if location fails
             setLocation({ lat: 21.4225, lng: 39.8262 });
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
           }
         );
       } else {

@@ -26,9 +26,9 @@ const DEFAULT_SETTINGS: NotificationSettings = {
 };
 
 const ADHAN_SOUNDS = {
-  makkah: "https://www.islamcan.com/audio/adhan/adhan-makkah.mp3",
-  madinah: "https://www.islamcan.com/audio/adhan/adhan-madinah.mp3",
-  egyptian: "https://download.quranicaudio.com/misc/adhan/abdulbasit_adhan.mp3",
+  makkah: "/sounds/adhan-makkah.mp3",
+  madinah: "/sounds/adhan-madinah.mp3",
+  egyptian: "/sounds/adhan-egyptian.mp3",
 };
 
 export const useNotifications = () => {
