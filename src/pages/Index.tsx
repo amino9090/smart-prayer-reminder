@@ -19,7 +19,7 @@ const Index = () => {
         scheduleNotification(prayer.name, prayer.arabicName, prayer.time);
       });
     }
-  }, [prayerTimes, settings.enabled, scheduleNotification]);
+  }, [prayerTimes, settings.enabled]);
 
   return (
     <div className="min-h-screen bg-gradient-islamic relative overflow-hidden pb-24">

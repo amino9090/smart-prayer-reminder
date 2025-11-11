@@ -12,8 +12,15 @@ export const usePrayerTimes = () => {
   const [nextPrayer, setNextPrayer] = useState<PrayerTime | null>(null);
   const [loading, setLoading] = useState(true);
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [calculationMethod, setCalculationMethod] = useState<string>("4");
 
   useEffect(() => {
+    // Load calculation method from localStorage
+    const savedMethod = localStorage.getItem("calculationMethod");
+    if (savedMethod) {
+      setCalculationMethod(savedMethod);
+    }
+
     const getLocation = () => {
       if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
@@ -37,6 +44,16 @@ export const usePrayerTimes = () => {
     };
 
     getLocation();
+
+    // Listen for calculation method changes
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "calculationMethod" && e.newValue) {
+        setCalculationMethod(e.newValue);
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   useEffect(() => {
@@ -46,19 +63,18 @@ export const usePrayerTimes = () => {
       try {
         const date = new Date();
         const response = await fetch(
-          `https://api.aladhan.com/v1/timings/${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}?latitude=${location.lat}&longitude=${location.lng}&method=4`
+          `https://api.aladhan.com/v1/timings/${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}?latitude=${location.lat}&longitude=${location.lng}&method=${calculationMethod}`
         );
         const data = await response.json();
 
         if (data.code === 200) {
           const timings = data.data.timings;
           const prayers: PrayerTime[] = [
-            { name: "Fajr", arabicName: "الفجر", time: timings.Fajr },
-            { name: "Sunrise", arabicName: "الشروق", time: timings.Sunrise },
-            { name: "Dhuhr", arabicName: "الظهر", time: timings.Dhuhr },
-            { name: "Asr", arabicName: "العصر", time: timings.Asr },
-            { name: "Maghrib", arabicName: "المغرب", time: timings.Maghrib },
-            { name: "Isha", arabicName: "العشاء", time: timings.Isha },
+            { name: "fajr", arabicName: "الفجر", time: timings.Fajr },
+            { name: "dhuhr", arabicName: "الظهر", time: timings.Dhuhr },
+            { name: "asr", arabicName: "العصر", time: timings.Asr },
+            { name: "maghrib", arabicName: "المغرب", time: timings.Maghrib },
+            { name: "isha", arabicName: "العشاء", time: timings.Isha },
           ];
 
           setPrayerTimes(prayers);
@@ -88,7 +104,7 @@ export const usePrayerTimes = () => {
     const interval = setInterval(fetchPrayerTimes, 3600000);
 
     return () => clearInterval(interval);
-  }, [location]);
+  }, [location, calculationMethod]);
 
   return { prayerTimes, nextPrayer, loading, location };
 };

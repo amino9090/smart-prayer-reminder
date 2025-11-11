@@ -24,19 +24,27 @@ const Settings = () => {
   const { settings, updateSettings, permission, requestPermission } = useNotifications();
 
   const calculationMethods = [
-    { value: "1", label: "جامعة أم القرى، مكة المكرمة", labelEn: "University of Islamic Sciences, Karachi" },
-    { value: "2", label: "الرابطة الإسلامية العالمية", labelEn: "Islamic Society of North America" },
-    { value: "3", label: "الهيئة المصرية العامة للمساحة", labelEn: "Egyptian General Authority of Survey" },
-    { value: "4", label: "جامعة العلوم الإسلامية، كراتشي", labelEn: "Umm Al-Qura University, Makkah" },
-    { value: "5", label: "جامعة طهران للعلوم الإسلامية", labelEn: "University of Tehran" },
+    { value: "1", label: "جامعة العلوم الإسلامية، كراتشي" },
+    { value: "2", label: "الرابطة الإسلامية لأمريكا الشمالية" },
+    { value: "3", label: "الهيئة المصرية العامة للمساحة" },
+    { value: "4", label: "جامعة أم القرى، مكة المكرمة" },
+    { value: "5", label: "جامعة طهران للعلوم" },
   ];
 
+  // Load calculation method from localStorage on mount
+  useEffect(() => {
+    const savedMethod = localStorage.getItem("calculationMethod");
+    if (savedMethod) {
+      setCalculationMethod(savedMethod);
+    }
+  }, []);
+
   const prayerNames = [
-    { key: "fajr", arabic: "الفجر", english: "Fajr" },
-    { key: "dhuhr", arabic: "الظهر", english: "Dhuhr" },
-    { key: "asr", arabic: "العصر", english: "Asr" },
-    { key: "maghrib", arabic: "المغرب", english: "Maghrib" },
-    { key: "isha", arabic: "العشاء", english: "Isha" },
+    { key: "fajr", arabic: "الفجر" },
+    { key: "dhuhr", arabic: "الظهر" },
+    { key: "asr", arabic: "العصر" },
+    { key: "maghrib", arabic: "المغرب" },
+    { key: "isha", arabic: "العشاء" },
   ];
 
   // Request notification permission on mount
@@ -74,6 +82,12 @@ const Settings = () => {
 
   const handleCalculationMethodChange = (value: string) => {
     setCalculationMethod(value);
+    localStorage.setItem("calculationMethod", value);
+    // Trigger storage event for other components
+    window.dispatchEvent(new StorageEvent("storage", {
+      key: "calculationMethod",
+      newValue: value
+    }));
     toast.success("تم تحديث طريقة حساب مواقيت الصلاة");
   };
 
@@ -140,28 +154,6 @@ const Settings = () => {
             </div>
           </Card>
 
-          {/* Language Settings */}
-          <Card className="p-6 bg-card">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-3 rounded-lg bg-primary/10">
-                <Globe className="text-primary" size={24} />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold font-amiri text-foreground">اللغة</h2>
-                <p className="text-sm text-muted-foreground font-cairo">اختر لغة التطبيق</p>
-              </div>
-            </div>
-
-            <Select value={language} onValueChange={handleLanguageChange}>
-              <SelectTrigger className="w-full font-cairo">
-                <SelectValue placeholder="اختر اللغة" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ar" className="font-cairo">العربية</SelectItem>
-                <SelectItem value="en" className="font-cairo">English</SelectItem>
-              </SelectContent>
-            </Select>
-          </Card>
 
           {/* Prayer Calculation Method */}
           <Card className="p-6 bg-card">

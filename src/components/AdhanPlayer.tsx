@@ -33,27 +33,27 @@ export const AdhanPlayer = ({ adhanType, label }: AdhanPlayerProps) => {
   };
 
   return (
-    <Card className="p-4 bg-white/5 border-islamic-gold/20 hover:border-islamic-gold/40 transition-colors">
+    <Card className="p-4 bg-card border-border hover:bg-secondary/50 transition-colors">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Volume2 className="w-5 h-5 text-islamic-gold" />
-          <span className="text-white font-cairo font-medium">{label}</span>
+          <Volume2 className="w-5 h-5 text-primary" />
+          <span className="text-foreground font-cairo font-medium">{label}</span>
         </div>
         <Button
           variant={isPlaying ? "default" : "outline"}
           size="sm"
           onClick={handlePlay}
-          className="min-w-[80px]"
+          className="min-w-[100px] font-cairo"
         >
           {isPlaying ? (
             <>
               <Pause className="w-4 h-4 ml-2" />
-              <span className="font-cairo">إيقاف</span>
+              إيقاف
             </>
           ) : (
             <>
               <Play className="w-4 h-4 ml-2" />
-              <span className="font-cairo">تشغيل</span>
+              تشغيل
             </>
           )}
         </Button>

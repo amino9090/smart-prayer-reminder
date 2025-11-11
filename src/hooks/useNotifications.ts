@@ -26,9 +26,9 @@ const DEFAULT_SETTINGS: NotificationSettings = {
 };
 
 const ADHAN_SOUNDS = {
-  makkah: "https://www.islamcan.com/audio/adhan/adhan-makkah.mp3",
-  madinah: "https://www.islamcan.com/audio/adhan/adhan-madinah.mp3",
-  egyptian: "https://www.islamcan.com/audio/adhan/adhan-egypt.mp3",
+  makkah: "https://cdn.islamic.network/quran/audio/128/ar.alafasy/1.mp3",
+  madinah: "https://cdn.islamic.network/quran/audio/128/ar.minshawi/1.mp3",
+  egyptian: "https://cdn.islamic.network/quran/audio/128/ar.abdulbasit/1.mp3",
 };
 
 export const useNotifications = () => {
@@ -146,7 +146,9 @@ export const useNotifications = () => {
     prayerNameArabic: string,
     time: string
   ) => {
-    const prayerKey = prayerName.toLowerCase() as keyof NotificationSettings["prayers"];
+    if (!settings.enabled) return;
+    
+    const prayerKey = prayerName as keyof NotificationSettings["prayers"];
     
     // Check if notification is enabled for this prayer
     if (!settings.prayers[prayerKey]) return;
@@ -156,11 +158,18 @@ export const useNotifications = () => {
     const prayerTime = new Date();
     prayerTime.setHours(hours, minutes, 0, 0);
 
+    // If prayer time has passed today, schedule for tomorrow
+    if (prayerTime <= now) {
+      prayerTime.setDate(prayerTime.getDate() + 1);
+    }
+
     const timeUntilPrayer = prayerTime.getTime() - now.getTime();
 
-    if (timeUntilPrayer > 0) {
+    if (timeUntilPrayer > 0 && timeUntilPrayer < 24 * 60 * 60 * 1000) {
       setTimeout(() => {
-        showNotification(prayerName, prayerNameArabic, time);
+        if (permission === "granted") {
+          showNotification(prayerName, prayerNameArabic, time);
+        }
       }, timeUntilPrayer);
     }
   };
