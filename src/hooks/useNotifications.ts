@@ -146,12 +146,29 @@ export const useNotifications = () => {
     prayerNameArabic: string,
     time: string
   ) => {
-    if (!settings.enabled) return;
+    console.log(`محاولة جدولة إشعار لـ ${prayerNameArabic}`, {
+      enabled: settings.enabled,
+      permission,
+      time
+    });
+
+    if (!settings.enabled) {
+      console.log(`الإشعارات معطلة في الإعدادات`);
+      return;
+    }
     
-    const prayerKey = prayerName as keyof NotificationSettings["prayers"];
+    const prayerKey = prayerName.toLowerCase() as keyof NotificationSettings["prayers"];
     
     // Check if notification is enabled for this prayer
-    if (!settings.prayers[prayerKey]) return;
+    if (!settings.prayers[prayerKey]) {
+      console.log(`إشعار ${prayerNameArabic} معطل في الإعدادات`);
+      return;
+    }
+
+    if (permission !== "granted") {
+      console.log("إذن الإشعارات غير ممنوح");
+      return;
+    }
 
     const now = new Date();
     const [hours, minutes] = time.split(":").map(Number);
@@ -164,12 +181,15 @@ export const useNotifications = () => {
     }
 
     const timeUntilPrayer = prayerTime.getTime() - now.getTime();
+    const hoursUntil = Math.floor(timeUntilPrayer / (1000 * 60 * 60));
+    const minutesUntil = Math.floor((timeUntilPrayer % (1000 * 60 * 60)) / (1000 * 60));
+
+    console.log(`✅ تم جدولة إشعار ${prayerNameArabic} بعد ${hoursUntil} ساعة و ${minutesUntil} دقيقة`);
 
     if (timeUntilPrayer > 0 && timeUntilPrayer < 24 * 60 * 60 * 1000) {
       setTimeout(() => {
-        if (permission === "granted") {
-          showNotification(prayerName, prayerNameArabic, time);
-        }
+        console.log(`🔔 حان وقت ${prayerNameArabic}`);
+        showNotification(prayerName, prayerNameArabic, time);
       }, timeUntilPrayer);
     }
   };

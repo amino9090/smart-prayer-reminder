@@ -10,16 +10,31 @@ import mosqueBg from "@/assets/mosque-bg.jpg";
 
 const Index = () => {
   const { prayerTimes, nextPrayer, loading } = usePrayerTimes();
-  const { scheduleNotification, settings } = useNotifications();
+  const { scheduleNotification, settings, permission, requestPermission } = useNotifications();
+
+  // Request notification permission on mount if not already granted
+  useEffect(() => {
+    if (permission === "default" && settings.enabled) {
+      console.log("طلب إذن الإشعارات...");
+      requestPermission();
+    }
+  }, []);
 
   // Schedule notifications for all prayers when prayer times are loaded
   useEffect(() => {
-    if (prayerTimes.length > 0 && settings.enabled) {
+    if (prayerTimes.length > 0 && settings.enabled && permission === "granted") {
+      console.log("جدولة إشعارات الصلوات...", {
+        count: prayerTimes.length,
+        permission,
+        enabled: settings.enabled
+      });
       prayerTimes.forEach((prayer) => {
         scheduleNotification(prayer.name, prayer.arabicName, prayer.time);
       });
+    } else if (prayerTimes.length > 0 && permission !== "granted") {
+      console.log("⚠️ لم يتم جدولة الإشعارات - الإذن غير ممنوح", { permission });
     }
-  }, [prayerTimes, settings.enabled]);
+  }, [prayerTimes, settings.enabled, permission]);
 
   return (
     <div className="min-h-screen bg-gradient-islamic relative overflow-hidden pb-24">
