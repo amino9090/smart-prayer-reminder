@@ -260,16 +260,31 @@ const Settings = () => {
             <div className="space-y-4">
               {permission !== "granted" && (
                 <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/20 mb-4">
-                  <p className="text-sm text-amber-500 font-cairo mb-3">
-                    يجب السماح بالإشعارات لتفعيل تنبيهات الأذان
-                  </p>
+                  <div className="mb-3">
+                    <p className="text-sm font-bold text-amber-600 font-cairo mb-2">
+                      ⚠️ الإشعارات غير مفعلة
+                    </p>
+                    <p className="text-xs text-amber-600/90 font-cairo mb-2">
+                      لتلقي إشعارات الأذان، يجب السماح بالإشعارات أولاً
+                    </p>
+                    {permission === "denied" && (
+                      <p className="text-xs text-amber-600/80 font-cairo">
+                        💡 إذا رفضت الإشعارات سابقاً، افتح إعدادات المتصفح وقم بتفعيل الإشعارات يدوياً لهذا الموقع
+                      </p>
+                    )}
+                  </div>
                   <Button
-                    onClick={requestPermission}
-                    className="w-full"
-                    variant="outline"
+                    onClick={async () => {
+                      const granted = await requestPermission();
+                      if (granted) {
+                        window.location.reload();
+                      }
+                    }}
+                    className="w-full font-cairo"
+                    variant="default"
                   >
                     <Bell className="w-4 h-4 ml-2" />
-                    <span className="font-cairo">السماح بالإشعارات</span>
+                    السماح بالإشعارات الآن
                   </Button>
                 </div>
               )}

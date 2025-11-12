@@ -82,11 +82,8 @@ export const useNotifications = () => {
         });
         return true;
       } else {
-        toast({
-          title: "تم رفض التنبيهات",
-          description: "لن تتلقى إشعارات الأذان",
-          variant: "destructive",
-        });
+        // Don't show error toast - user may have denied by mistake
+        // They can enable it later from settings page
         return false;
       }
     } catch (error) {
