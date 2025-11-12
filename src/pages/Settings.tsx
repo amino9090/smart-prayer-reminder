@@ -134,9 +134,13 @@ const Settings = () => {
 
             <div className="space-y-4">
               <div className="flex items-center justify-between p-4 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors">
+                <Switch
+                  id="dark-mode"
+                  checked={darkMode}
+                  onCheckedChange={handleDarkModeToggle}
+                />
                 <div className="flex items-center gap-3">
-                  <Moon className="text-muted-foreground" size={20} />
-                  <div>
+                  <div className="text-right">
                     <Label htmlFor="dark-mode" className="text-base font-cairo cursor-pointer">
                       الوضع الليلي
                     </Label>
@@ -144,12 +148,8 @@ const Settings = () => {
                       تفعيل المظهر الداكن للعينين
                     </p>
                   </div>
+                  <Moon className="text-muted-foreground" size={20} />
                 </div>
-                <Switch
-                  id="dark-mode"
-                  checked={darkMode}
-                  onCheckedChange={handleDarkModeToggle}
-                />
               </div>
             </div>
           </Card>
@@ -199,9 +199,13 @@ const Settings = () => {
                   key={prayer.key}
                   className="flex items-center justify-between p-4 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors"
                 >
+                  <Switch
+                    id={`notification-${prayer.key}`}
+                    checked={settings.prayers[prayer.key as keyof typeof settings.prayers]}
+                    onCheckedChange={() => handleNotificationToggle(prayer.key)}
+                  />
                   <div className="flex items-center gap-3">
-                    <Bell className="text-muted-foreground" size={20} />
-                    <div>
+                    <div className="text-right">
                       <Label
                         htmlFor={`notification-${prayer.key}`}
                         className="text-base font-cairo cursor-pointer"
@@ -212,27 +216,12 @@ const Settings = () => {
                         تنبيه صلاة {prayer.arabic}
                       </p>
                     </div>
+                    <Bell className="text-muted-foreground" size={20} />
                   </div>
-                  <Switch
-                    id={`notification-${prayer.key}`}
-                    checked={settings.prayers[prayer.key as keyof typeof settings.prayers]}
-                    onCheckedChange={() => handleNotificationToggle(prayer.key)}
-                  />
                 </div>
               ))}
 
               <div className="flex items-center justify-between p-4 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors">
-                <div className="flex items-center gap-3">
-                  <Volume2 className="text-muted-foreground" size={20} />
-                  <div>
-                    <Label htmlFor="sound-enabled" className="text-base font-cairo cursor-pointer">
-                      الصوت
-                    </Label>
-                    <p className="text-xs text-muted-foreground font-cairo">
-                      تشغيل صوت الأذان عند التنبيه
-                    </p>
-                  </div>
-                </div>
                 <Switch
                   id="sound-enabled"
                   checked={settings.enabled}
@@ -241,6 +230,17 @@ const Settings = () => {
                     toast.success(checked ? "تم تفعيل الصوت" : "تم كتم الصوت");
                   }}
                 />
+                <div className="flex items-center gap-3">
+                  <div className="text-right">
+                    <Label htmlFor="sound-enabled" className="text-base font-cairo cursor-pointer">
+                      الصوت
+                    </Label>
+                    <p className="text-xs text-muted-foreground font-cairo">
+                      تشغيل صوت الأذان عند التنبيه
+                    </p>
+                  </div>
+                  <Volume2 className="text-muted-foreground" size={20} />
+                </div>
               </div>
             </div>
           </Card>

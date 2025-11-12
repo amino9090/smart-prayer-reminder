@@ -79,6 +79,7 @@ export const usePrayerTimes = () => {
           const timings = data.data.timings;
           const prayers: PrayerTime[] = [
             { name: "fajr", arabicName: "الفجر", time: timings.Fajr },
+            { name: "sunrise", arabicName: "الشروق", time: timings.Sunrise },
             { name: "dhuhr", arabicName: "الظهر", time: timings.Dhuhr },
             { name: "asr", arabicName: "العصر", time: timings.Asr },
             { name: "maghrib", arabicName: "المغرب", time: timings.Maghrib },
