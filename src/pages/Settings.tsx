@@ -18,7 +18,10 @@ import { useNotifications } from "@/hooks/useNotifications";
 import { AdhanPlayer } from "@/components/AdhanPlayer";
 
 const Settings = () => {
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem("darkMode");
+    return saved ? saved === "true" : true; // Default to dark mode
+  });
   const [language, setLanguage] = useState("ar");
   const [calculationMethod, setCalculationMethod] = useState("4");
   const { settings, updateSettings, permission, requestPermission } = useNotifications();
@@ -30,6 +33,16 @@ const Settings = () => {
     { value: "4", label: "جامعة أم القرى، مكة المكرمة" },
     { value: "5", label: "جامعة طهران للعلوم" },
   ];
+
+  // Apply dark mode on mount and when it changes
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    localStorage.setItem("darkMode", String(darkMode));
+  }, [darkMode]);
 
   // Load calculation method from localStorage on mount
   useEffect(() => {
@@ -71,8 +84,9 @@ const Settings = () => {
   };
 
   const handleDarkModeToggle = () => {
-    setDarkMode(!darkMode);
-    toast.success(darkMode ? "تم تفعيل الوضع النهاري" : "تم تفعيل الوضع الليلي");
+    const newMode = !darkMode;
+    setDarkMode(newMode);
+    toast.success(newMode ? "تم تفعيل الوضع الليلي" : "تم تفعيل الوضع النهاري");
   };
 
   const handleLanguageChange = (value: string) => {
