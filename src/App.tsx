@@ -9,6 +9,7 @@ import Azkar from "./pages/Azkar";
 import Settings from "./pages/Settings";
 import Qibla from "./pages/Qibla";
 import Onboarding from "./pages/Onboarding";
+import IslamicCalendar from "./pages/IslamicCalendar";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +40,7 @@ const App = () => (
           <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
           <Route path="/azkar" element={<ProtectedRoute><Azkar /></ProtectedRoute>} />
           <Route path="/qibla" element={<ProtectedRoute><Qibla /></ProtectedRoute>} />
+          <Route path="/calendar" element={<ProtectedRoute><IslamicCalendar /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
