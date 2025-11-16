@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { NavigationBar } from "@/components/NavigationBar";
-import { Moon, Sun, Globe, Calculator, Bell, Volume2, Music } from "lucide-react";
+import { Moon, Sun, Globe, Calculator, Bell, Volume2, Music, Clock } from "lucide-react";
 import { toast } from "sonner";
 import islamicPattern from "@/assets/islamic-pattern.jpg";
 import { useNotifications } from "@/hooks/useNotifications";
@@ -242,6 +242,92 @@ const Settings = () => {
                   }}
                 />
               </div>
+            </div>
+          </Card>
+
+          {/* Smart Reminders */}
+          <Card className="p-6 bg-card">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-3 rounded-lg bg-primary/10">
+                <Clock className="text-primary" size={24} />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold font-amiri text-foreground">التنبيهات الذكية</h2>
+                <p className="text-sm text-muted-foreground font-cairo">تذكير قبل وقت الصلاة</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {/* Enable Reminder */}
+              <div className="flex items-center justify-between p-4 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors">
+                <div className="flex items-center gap-3">
+                  <Clock className="text-muted-foreground" size={20} />
+                  <div>
+                    <Label htmlFor="reminder-enabled" className="text-base font-cairo cursor-pointer">
+                      تفعيل التذكير
+                    </Label>
+                    <p className="text-xs text-muted-foreground font-cairo">
+                      تنبيه قبل موعد الصلاة
+                    </p>
+                  </div>
+                </div>
+                <Switch
+                  id="reminder-enabled"
+                  checked={settings.reminderEnabled}
+                  onCheckedChange={(checked) => {
+                    updateSettings({ reminderEnabled: checked });
+                    toast.success(checked ? "تم تفعيل التذكير المسبق" : "تم تعطيل التذكير المسبق");
+                  }}
+                />
+              </div>
+
+              {/* Reminder Time */}
+              {settings.reminderEnabled && (
+                <div className="space-y-3">
+                  <Label className="text-sm font-cairo text-foreground">وقت التذكير قبل الصلاة</Label>
+                  <Select
+                    value={settings.reminderMinutes.toString()}
+                    onValueChange={(value) => {
+                      updateSettings({ reminderMinutes: parseInt(value) });
+                      toast.success(`سيتم التذكير قبل ${value} دقيقة من الصلاة`);
+                    }}
+                  >
+                    <SelectTrigger className="bg-background">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">5 دقائق</SelectItem>
+                      <SelectItem value="10">10 دقائق</SelectItem>
+                      <SelectItem value="15">15 دقيقة</SelectItem>
+                      <SelectItem value="20">20 دقيقة</SelectItem>
+                      <SelectItem value="30">30 دقيقة</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {/* Reminder Sound */}
+              {settings.reminderEnabled && (
+                <div className="space-y-3">
+                  <Label className="text-sm font-cairo text-foreground">صوت التذكير</Label>
+                  <Select
+                    value={settings.reminderSound}
+                    onValueChange={(value: "makkah" | "madinah" | "egyptian") => {
+                      updateSettings({ reminderSound: value });
+                      toast.success("تم تغيير صوت التذكير");
+                    }}
+                  >
+                    <SelectTrigger className="bg-background">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="makkah">أذان مكة المكرمة</SelectItem>
+                      <SelectItem value="madinah">أذان المدينة المنورة</SelectItem>
+                      <SelectItem value="egyptian">الأذان المصري</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
             </div>
           </Card>
 

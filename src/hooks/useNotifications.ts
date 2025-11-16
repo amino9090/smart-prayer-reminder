@@ -4,6 +4,9 @@ import { useToast } from "@/hooks/use-toast";
 export interface NotificationSettings {
   enabled: boolean;
   adhanSound: "makkah" | "madinah" | "egyptian";
+  reminderEnabled: boolean;
+  reminderMinutes: number;
+  reminderSound: "makkah" | "madinah" | "egyptian";
   prayers: {
     fajr: boolean;
     dhuhr: boolean;
@@ -16,6 +19,9 @@ export interface NotificationSettings {
 const DEFAULT_SETTINGS: NotificationSettings = {
   enabled: true,
   adhanSound: "makkah",
+  reminderEnabled: true,
+  reminderMinutes: 10,
+  reminderSound: "makkah",
   prayers: {
     fajr: true,
     dhuhr: true,
@@ -177,6 +183,41 @@ export const useNotifications = () => {
       prayerTime.setDate(prayerTime.getDate() + 1);
     }
 
+    // Schedule reminder notification (before prayer time)
+    if (settings.reminderEnabled && settings.reminderMinutes > 0) {
+      const reminderTime = new Date(prayerTime.getTime() - settings.reminderMinutes * 60 * 1000);
+      const timeUntilReminder = reminderTime.getTime() - now.getTime();
+
+      if (timeUntilReminder > 0 && timeUntilReminder < 24 * 60 * 60 * 1000) {
+        const hoursUntil = Math.floor(timeUntilReminder / (1000 * 60 * 60));
+        const minutesUntil = Math.floor((timeUntilReminder % (1000 * 60 * 60)) / (1000 * 60));
+        console.log(`⏰ تم جدولة تذكير ${prayerNameArabic} قبل ${settings.reminderMinutes} دقيقة - بعد ${hoursUntil} ساعة و ${minutesUntil} دقيقة`);
+
+        setTimeout(() => {
+          console.log(`⏰ تذكير: ${prayerNameArabic} بعد ${settings.reminderMinutes} دقيقة`);
+          
+          if (permission === "granted") {
+            const notification = new Notification(`تذكير: ${prayerNameArabic} بعد ${settings.reminderMinutes} دقيقة`, {
+              body: `سيحل وقت ${prayerNameArabic} في ${time}`,
+              icon: "/favicon.ico",
+              badge: "/favicon.ico",
+              tag: `${prayerName}-reminder`,
+              requireInteraction: false,
+            });
+
+            notification.onclick = () => {
+              window.focus();
+              notification.close();
+            };
+
+            // Play reminder sound
+            playAdhan(settings.reminderSound);
+          }
+        }, timeUntilReminder);
+      }
+    }
+
+    // Schedule main prayer notification
     const timeUntilPrayer = prayerTime.getTime() - now.getTime();
     const hoursUntil = Math.floor(timeUntilPrayer / (1000 * 60 * 60));
     const minutesUntil = Math.floor((timeUntilPrayer % (1000 * 60 * 60)) / (1000 * 60));
