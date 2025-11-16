@@ -47,7 +47,16 @@ export const useNotifications = () => {
     const saved = localStorage.getItem("notificationSettings");
     if (saved) {
       try {
-        setSettings(JSON.parse(saved));
+        const parsedSettings = JSON.parse(saved);
+        // Merge with defaults to ensure all properties exist
+        setSettings({
+          ...DEFAULT_SETTINGS,
+          ...parsedSettings,
+          prayers: {
+            ...DEFAULT_SETTINGS.prayers,
+            ...parsedSettings.prayers,
+          },
+        });
       } catch (error) {
         console.error("Error loading notification settings:", error);
       }
