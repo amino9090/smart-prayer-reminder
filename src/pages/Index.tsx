@@ -5,7 +5,7 @@ import { NavigationBar } from "@/components/NavigationBar";
 import { usePrayerTimes } from "@/hooks/usePrayerTimes";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useEffect } from "react";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles, Circle } from "lucide-react";
 import mosqueBg from "@/assets/mosque-bg.jpg";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -88,26 +88,56 @@ const Index = () => {
             )}
 
             <div className="space-y-4">
-              {/* Quick Access Card */}
-              <Card 
-                className="card-glow border-primary/30 cursor-pointer hover:border-primary/60 transition-all hover:scale-[1.02]"
-                onClick={() => navigate("/allah-names")}
-              >
-                <CardContent className="py-4 px-6">
-                  <div className="flex items-center justify-between">
-                    <Sparkles className="w-6 h-6 text-primary" />
-                    <div className="text-center flex-1">
-                      <h3 className="text-xl font-amiri text-primary font-bold">
-                        أسماء الله الحسنى
-                      </h3>
-                      <p className="text-xs text-muted-foreground font-cairo mt-1">
-                        اضغط للدخول والتعرف على الأسماء التسعة والتسعين
-                      </p>
+              {/* Quick Access Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Card 
+                  className="card-glow border-primary/30 cursor-pointer hover:border-primary/60 transition-all hover:scale-[1.02]"
+                  onClick={() => navigate("/allah-names")}
+                >
+                  <CardContent className="py-4 px-6">
+                    <div className="flex items-center justify-between">
+                      <Sparkles className="w-6 h-6 text-primary" />
+                      <div className="text-center flex-1">
+                        <h3 className="text-xl font-amiri text-primary font-bold">
+                          أسماء الله الحسنى
+                        </h3>
+                        <p className="text-xs text-muted-foreground font-cairo mt-1">
+                          التعرف على الأسماء التسعة والتسعين
+                        </p>
+                      </div>
+                      <Sparkles className="w-6 h-6 text-primary" />
                     </div>
-                    <Sparkles className="w-6 h-6 text-primary" />
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+
+                <Card 
+                  className="card-glow border-primary/30 cursor-pointer hover:border-primary/60 transition-all hover:scale-[1.02]"
+                  onClick={() => navigate("/tasbih")}
+                >
+                  <CardContent className="py-4 px-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex gap-1">
+                        <Circle className="w-2 h-2 text-primary fill-primary" />
+                        <Circle className="w-2 h-2 text-primary fill-primary" />
+                        <Circle className="w-2 h-2 text-primary fill-primary" />
+                      </div>
+                      <div className="text-center flex-1">
+                        <h3 className="text-xl font-amiri text-primary font-bold">
+                          السبحة الإلكترونية
+                        </h3>
+                        <p className="text-xs text-muted-foreground font-cairo mt-1">
+                          عداد التسبيح مع الإحصائيات
+                        </p>
+                      </div>
+                      <div className="flex gap-1">
+                        <Circle className="w-2 h-2 text-primary fill-primary" />
+                        <Circle className="w-2 h-2 text-primary fill-primary" />
+                        <Circle className="w-2 h-2 text-primary fill-primary" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
 
               <h2 className="text-2xl font-bold text-center mb-6 font-amiri text-primary">
                 مواقيت الصلاة

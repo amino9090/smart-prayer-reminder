@@ -11,6 +11,7 @@ import Qibla from "./pages/Qibla";
 import Onboarding from "./pages/Onboarding";
 import IslamicCalendar from "./pages/IslamicCalendar";
 import AllahNames from "./pages/AllahNames";
+import Tasbih from "./pages/Tasbih";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -43,6 +44,7 @@ const App = () => (
           <Route path="/qibla" element={<ProtectedRoute><Qibla /></ProtectedRoute>} />
           <Route path="/calendar" element={<ProtectedRoute><IslamicCalendar /></ProtectedRoute>} />
           <Route path="/allah-names" element={<ProtectedRoute><AllahNames /></ProtectedRoute>} />
+          <Route path="/tasbih" element={<ProtectedRoute><Tasbih /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
